@@ -6,6 +6,10 @@ from services.recomendador import recomendar_investimentos
 from core.planejador import calcular_tempo_ate_meta
 from services.estratega import analisar_liberdade_financeira
 from core.planejador import calcular_tempo_ate_meta, calcular_aporte_necessario
+from core.simulador import simular_investimento_completo, simular_monte_carlo, extrair_cenarios_monte_carlo
+import numpy as np
+from core.impostos import calcular_ir_renda_fixa
+import plotly.express as px
 
 # Configuração da Página
 st.set_page_config(page_title="InvestSmart - Consultor", layout="wide")
@@ -51,6 +55,60 @@ with tab1:
         st.subheader("📈 Evolução do Patrimônio no Tempo")
         df_evolucao = pd.DataFrame(res.evolucao, columns=["Patrimônio (R$)"])
         st.line_chart(df_evolucao)
+
+# --- Adicione na Sidebar ou logo acima do botão na Tab 1 ---
+volatilidade = st.sidebar.slider("Nível de Risco/Volatilidade (%)", 1.0, 20.0, 3.0, help="Quanto maior, mais as linhas se afastam.") / 100
+
+if st.button("🚀 Simular Cenários Probabilísticos"):
+    with st.spinner("Simulando 1.000 universos possíveis..."):
+        matriz = simular_monte_carlo(v_ini, v_aporte, taxa_manual, tempo, volatilidade)
+        cenarios = extrair_cenarios_monte_carlo(matriz, v_ini, v_aporte, tempo, inflacao)
+        
+        st.subheader("📊 Análise de Risco (Modelo Lognormal)")
+        
+        # Métricas com explicação
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Cenário Ruim (10%)", f"R$ {cenarios['pessimista']:,.2f}", help="Existe 90% de chance de você ganhar MAIS que isso.")
+        c2.metric("Cenário Provável", f"R$ {cenarios['provavel']:,.2f}", help="A mediana das simulações.")
+        c3.metric("Cenário Ótimo (10%)", f"R$ {cenarios['otimista']:,.2f}", help="Cenário de mercado muito favorável.")
+        
+        # Gráfico Melhorado
+        df_plot = pd.DataFrame({
+            "Pessimista": np.percentile(matriz, 10, axis=0),
+            "Médio": np.percentile(matriz, 50, axis=0),
+            "Otimista": np.percentile(matriz, 90, axis=0)
+        })
+        
+        st.line_chart(df_plot)
+        st.caption("O gráfico mostra o valor bruto. As métricas acima já descontam IR e Inflação.")
+
+
+        st.markdown("---")
+        st.subheader("🍕 Composição do Patrimônio (Cenário Provável)")
+
+        # 1. Pegamos o valor BRUTO mediano (sem nenhum desconto ainda)
+        v_bruto_provavel = np.percentile(matriz[:, -1], 50)
+
+        # 2. Calculamos o IR e o Líquido exatos para esse valor
+        total_investido = v_ini + (v_aporte * tempo)
+        v_imposto, v_liquido_nominal = calcular_ir_renda_fixa(v_bruto_provavel, v_ini, v_aporte, tempo)
+        lucro_liquido = v_liquido_nominal - total_investido
+
+        # 3. Criamos os dados com as 3 fatias
+        df_pizza = pd.DataFrame({
+            "Categoria": ["Capital Investido", "Lucro Líquido", "Imposto de Renda (IR)"],
+            "Valores": [total_investido, max(0, lucro_liquido), v_imposto]
+        })
+
+        # 4. Gráfico com 3 cores (Azul, Verde e Vermelho/Laranja para o imposto)
+        fig = px.pie(df_pizza, values='Valores', names='Categoria', 
+                    color_discrete_sequence=['#29b5e8', '#1af2aa', '#ff4b4b'],
+                    hole=0.4)
+
+        st.plotly_chart(fig)
+
+
+
 
 with tab2:
     st.subheader("Onde seu dinheiro rende mais?")
