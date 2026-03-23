@@ -36,7 +36,7 @@ tempo = st.sidebar.slider("Tempo (Meses)", 1, 360, 12)
 inflacao = st.sidebar.slider("Inflação Anual (%)", 0.0, 20.0, 4.5) / 100
 
 # --- TABS (Abas do Sistema) ---
-tab1, tab2, tab3 = st.tabs(["💰 Simulador Manual", "🏆 Ranking de Bancos", "🎯 Planejador"])
+tab1, tab2, tab3, tab4 = st.tabs(["💰 Simulador Manual", "🏆 Ranking de Bancos", "🎯 Planejador", "💼 Minha Carteira"])
 
 with tab1:
     st.subheader("Simulação Personalizada")
@@ -57,55 +57,55 @@ with tab1:
         st.line_chart(df_evolucao)
 
 # --- Adicione na Sidebar ou logo acima do botão na Tab 1 ---
-volatilidade = st.sidebar.slider("Nível de Risco/Volatilidade (%)", 1.0, 20.0, 3.0, help="Quanto maior, mais as linhas se afastam.") / 100
+    volatilidade = st.sidebar.slider("Nível de Risco/Volatilidade (%)", 1.0, 20.0, 3.0, help="Quanto maior, mais as linhas se afastam.") / 100
 
-if st.button("🚀 Simular Cenários Probabilísticos"):
-    with st.spinner("Simulando 1.000 universos possíveis..."):
-        matriz = simular_monte_carlo(v_ini, v_aporte, taxa_manual, tempo, volatilidade)
-        cenarios = extrair_cenarios_monte_carlo(matriz, v_ini, v_aporte, tempo, inflacao)
-        
-        st.subheader("📊 Análise de Risco (Modelo Lognormal)")
-        
-        # Métricas com explicação
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Cenário Ruim (10%)", f"R$ {cenarios['pessimista']:,.2f}", help="Existe 90% de chance de você ganhar MAIS que isso.")
-        c2.metric("Cenário Provável", f"R$ {cenarios['provavel']:,.2f}", help="A mediana das simulações.")
-        c3.metric("Cenário Ótimo (10%)", f"R$ {cenarios['otimista']:,.2f}", help="Cenário de mercado muito favorável.")
-        
-        # Gráfico Melhorado
-        df_plot = pd.DataFrame({
-            "Pessimista": np.percentile(matriz, 10, axis=0),
-            "Médio": np.percentile(matriz, 50, axis=0),
-            "Otimista": np.percentile(matriz, 90, axis=0)
-        })
-        
-        st.line_chart(df_plot)
-        st.caption("O gráfico mostra o valor bruto. As métricas acima já descontam IR e Inflação.")
+    if st.button("🚀 Simular Cenários Probabilísticos"):
+        with st.spinner("Simulando 1.000 universos possíveis..."):
+            matriz = simular_monte_carlo(v_ini, v_aporte, taxa_manual, tempo, volatilidade)
+            cenarios = extrair_cenarios_monte_carlo(matriz, v_ini, v_aporte, tempo, inflacao)
+            
+            st.subheader("📊 Análise de Risco (Modelo Lognormal)")
+            
+            # Métricas com explicação
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Cenário Ruim (10%)", f"R$ {cenarios['pessimista']:,.2f}", help="Existe 90% de chance de você ganhar MAIS que isso.")
+            c2.metric("Cenário Provável", f"R$ {cenarios['provavel']:,.2f}", help="A mediana das simulações.")
+            c3.metric("Cenário Ótimo (10%)", f"R$ {cenarios['otimista']:,.2f}", help="Cenário de mercado muito favorável.")
+            
+            # Gráfico Melhorado
+            df_plot = pd.DataFrame({
+                "Pessimista": np.percentile(matriz, 10, axis=0),
+                "Médio": np.percentile(matriz, 50, axis=0),
+                "Otimista": np.percentile(matriz, 90, axis=0)
+            })
+            
+            st.line_chart(df_plot)
+            st.caption("O gráfico mostra o valor bruto. As métricas acima já descontam IR e Inflação.")
 
 
-        st.markdown("---")
-        st.subheader("🍕 Composição do Patrimônio (Cenário Provável)")
+            st.markdown("---")
+            st.subheader("🍕 Composição do Patrimônio (Cenário Provável)")
 
-        # 1. Pegamos o valor BRUTO mediano (sem nenhum desconto ainda)
-        v_bruto_provavel = np.percentile(matriz[:, -1], 50)
+            # 1. Pegamos o valor BRUTO mediano (sem nenhum desconto ainda)
+            v_bruto_provavel = np.percentile(matriz[:, -1], 50)
 
-        # 2. Calculamos o IR e o Líquido exatos para esse valor
-        total_investido = v_ini + (v_aporte * tempo)
-        v_imposto, v_liquido_nominal = calcular_ir_renda_fixa(v_bruto_provavel, v_ini, v_aporte, tempo)
-        lucro_liquido = v_liquido_nominal - total_investido
+            # 2. Calculamos o IR e o Líquido exatos para esse valor
+            total_investido = v_ini + (v_aporte * tempo)
+            v_imposto, v_liquido_nominal = calcular_ir_renda_fixa(v_bruto_provavel, v_ini, v_aporte, tempo)
+            lucro_liquido = v_liquido_nominal - total_investido
 
-        # 3. Criamos os dados com as 3 fatias
-        df_pizza = pd.DataFrame({
-            "Categoria": ["Capital Investido", "Lucro Líquido", "Imposto de Renda (IR)"],
-            "Valores": [total_investido, max(0, lucro_liquido), v_imposto]
-        })
+            # 3. Criamos os dados com as 3 fatias
+            df_pizza = pd.DataFrame({
+                "Categoria": ["Capital Investido", "Lucro Líquido", "Imposto de Renda (IR)"],
+                "Valores": [total_investido, max(0, lucro_liquido), v_imposto]
+            })
 
-        # 4. Gráfico com 3 cores (Azul, Verde e Vermelho/Laranja para o imposto)
-        fig = px.pie(df_pizza, values='Valores', names='Categoria', 
-                    color_discrete_sequence=['#29b5e8', '#1af2aa', '#ff4b4b'],
-                    hole=0.4)
+            # 4. Gráfico com 3 cores (Azul, Verde e Vermelho/Laranja para o imposto)
+            fig = px.pie(df_pizza, values='Valores', names='Categoria', 
+                        color_discrete_sequence=['#29b5e8', '#1af2aa', '#ff4b4b'],
+                        hole=0.4)
 
-        st.plotly_chart(fig)
+            st.plotly_chart(fig)
 
 
 
@@ -199,4 +199,69 @@ with tab3:
         st.write("🎉 **Parabéns! Seu patrimônio já sustenta seu padrão de vida!**")
     else:
         st.write(f"Ainda faltam **R$ {analise['falta_para_meta']:,.2f}** para atingir o patrimônio necessário para essa renda.")
+
+with tab4:
+    st.subheader("💼 Simulador de Carteira Diversificada")
+    st.write("Monte sua estratégia distribuindo seu capital entre diferentes ativos.")
+
+    from data.ativos import obter_investimentos
+    ativos_disponiveis = obter_investimentos()
+    
+    # 1. Seleção dos Ativos
+    nomes_ativos = [f"{a['banco']} - {a['produto']}" for a in ativos_disponiveis]
+    selecionados = st.multiselect("Selecione os ativos da sua carteira:", nomes_ativos, default=nomes_ativos[:2])
+
+    if selecionados:
+        st.markdown("### ⚖️ Definir Pesos (%)")
+        col_pesos = st.columns(len(selecionados))
+        pesos = []
+        
+        for i, nome in enumerate(selecionados):
+            with col_pesos[i]:
+                peso = st.number_input(f"% em {nome.split(' - ')[0]}", min_value=0, max_value=100, value=100//len(selecionados), key=f"peso_{i}")
+                pesos.append(peso)
+
+        total_peso = sum(pesos)
+        if total_peso != 100:
+            st.error(f"⚠️ A soma dos pesos deve ser 100%. Atualmente está em **{total_peso}%**.")
+        else:
+            if st.button("🚀 Simular Minha Carteira"):
+                # 2. Cálculo da Taxa Ponderada da Carteira
+                taxa_ponderada_anual = 0
+                isencao_ponderada = 0 # Para saber quanto da carteira é isento de IR
+                
+                for i, nome in enumerate(selecionados):
+                    # Encontra o objeto original do ativo
+                    ativo_original = next(a for a in ativos_disponiveis if f"{a['banco']} - {a['produto']}" == nome)
+                    fator_peso = pesos[i] / 100
+                    taxa_ponderada_anual += ativo_original['taxa_anual'] * fator_peso
+                    if ativo_original['isento']:
+                        isencao_ponderada += fator_peso
+
+                # 3. Executa a simulação (Consideramos o IR proporcional aos ativos não isentos)
+                # Para simplificar no MVP: se mais de 50% for isento, simulamos como isento ou aplicamos a taxa média
+                # Aqui usaremos a simulação completa com a taxa ponderada
+                res_carteira = simular_investimento_completo(v_ini, v_aporte, taxa_ponderada_anual, tempo, inflacao, considerar_imposto=(isencao_ponderada < 0.5))
+
+                # 4. Resultados Visuais
+                st.markdown("---")
+                st.success(f"📊 Resultado da Carteira Combinada (Taxa Média: {taxa_ponderada_anual*100:.2f}% a.a.)")
+                
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Líquido Estimado", f"R$ {res_carteira.valor_liquido:,.2f}")
+                c2.metric("Lucro Real (IPCA)", f"R$ {res_carteira.valor_real_inflacao:,.2f}")
+                c3.metric("Poder de Compra", f"{((res_carteira.valor_real_inflacao/res_carteira.valor_total_investido)-1)*100:.2f}%")
+
+                # Gráfico de Evolução da Carteira
+                st.subheader("📈 Crescimento da Carteira Diversificada")
+                st.line_chart(pd.DataFrame(res_carteira.evolucao, columns=["Carteira (R$)"]))
+
+                # Gráfico de Pizza da Alocação
+                st.subheader("🍕 Sua Divisão de Ativos")
+                df_pizza_carteira = pd.DataFrame({"Ativo": selecionados, "Peso (%)": pesos})
+                fig_carteira = px.pie(df_pizza_carteira, values='Peso (%)', names='Ativo', hole=0.4,
+                                     color_discrete_sequence=px.colors.qualitative.Pastel)
+                st.plotly_chart(fig_carteira)
+    else:
+        st.info("Selecione pelo menos um ativo acima para começar a montar sua carteira.")
 

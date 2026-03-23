@@ -3,6 +3,7 @@ from data.taxas import obter_taxa
 def obter_investimentos():
     cdi = obter_taxa("CDI")
     selic = obter_taxa("SELIC")
+    ipca = obter_taxa("IPCA_ESTIMADO") 
 
     return [
         {
@@ -28,7 +29,19 @@ def obter_investimentos():
             "produto": "CDB Pré 14%",
             "taxa_anual": 0.14,
             "isento": False, "risco": "medio", "liquidez": "baixa", "tipo": "pre"
-        }
+        },
+        {
+            "banco": "Tesouro",
+            "produto": "IPCA + 6%",
+            "taxa_anual": ipca + 0.06, # Taxa real + inflação de 2026
+            "isento": False, "risco": "minimo", "liquidez": "baixa", "tipo": "pos"
+        },
+        {
+            "banco": "Itaú",
+            "produto": "LCA 88% CDI",
+            "taxa_anual": cdi * 0.88,
+            "isento": True, "risco": "minimo", "liquidez": "media", "tipo": "pos"
+        },
     ]
 
 INVESTIMENTOS_MERCADO = obter_investimentos()
