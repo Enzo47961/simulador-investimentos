@@ -31,3 +31,16 @@ def ajustar_por_inflacao(valor_nominal, inflacao_anual, meses):
     valor_real = valor_nominal / fator_inflacao
 
     return valor_real
+
+# ... (suas funções anteriores: converter_inflacao_anual_para_mensal e ajustar_por_inflacao)
+
+def calcular_taxa_real_fisher(taxa_nominal, inflacao_anual):
+    """
+    Calcula a rentabilidade real líquida (acima da inflação) usando a fórmula de Fisher.
+    Esta é a fórmula padrão usada por economistas e bancos centrais.
+    """
+    # Evita divisão por zero caso a inflação fosse -100% (improvável mas seguro)
+    if inflacao_anual <= -1:
+        return taxa_nominal 
+        
+    return ((1 + taxa_nominal) / (1 + inflacao_anual)) - 1
