@@ -30,8 +30,8 @@ st.markdown("---")
 
 # --- SIDEBAR (Entradas de Dados) ---
 st.sidebar.header("📥 Seus Dados")
-v_ini = st.sidebar.number_input("Valor Inicial (R$)", min_value=0.0, value=10000.0, step=1000.0)
-v_aporte = st.sidebar.number_input("Aporte Mensal (R$)", min_value=0.0, value=500.0, step=100.0)
+v_ini = st.sidebar.number_input("Valor Inicial (R$)", min_value=0.0, value=0.0, step=1000.0, format="%.2f")
+v_aporte = st.sidebar.number_input("Aporte Mensal (R$)", min_value=0.0, value=0.0, step=100.0, format="%.2f")
 tempo = st.sidebar.slider("Tempo (Meses)", 1, 360, 12)
 inflacao = st.sidebar.slider("Inflação Anual (%)", 0.0, 20.0, 4.5) / 100
 
@@ -57,55 +57,55 @@ with tab1:
         st.line_chart(df_evolucao)
 
 # --- Adicione na Sidebar ou logo acima do botão na Tab 1 ---
-volatilidade = st.sidebar.slider("Nível de Risco/Volatilidade (%)", 1.0, 20.0, 3.0, help="Quanto maior, mais as linhas se afastam.") / 100
+    volatilidade = st.sidebar.slider("Nível de Risco/Volatilidade (%)", 1.0, 20.0, 3.0, help="Quanto maior, mais as linhas se afastam.") / 100
 
-if st.button("🚀 Simular Cenários Probabilísticos"):
-    with st.spinner("Simulando 1.000 universos possíveis..."):
-        matriz = simular_monte_carlo(v_ini, v_aporte, taxa_manual, tempo, volatilidade)
-        cenarios = extrair_cenarios_monte_carlo(matriz, v_ini, v_aporte, tempo, inflacao)
-        
-        st.subheader("📊 Análise de Risco (Modelo Lognormal)")
-        
-        # Métricas com explicação
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Cenário Ruim (10%)", f"R$ {cenarios['pessimista']:,.2f}", help="Existe 90% de chance de você ganhar MAIS que isso.")
-        c2.metric("Cenário Provável", f"R$ {cenarios['provavel']:,.2f}", help="A mediana das simulações.")
-        c3.metric("Cenário Ótimo (10%)", f"R$ {cenarios['otimista']:,.2f}", help="Cenário de mercado muito favorável.")
-        
-        # Gráfico Melhorado
-        df_plot = pd.DataFrame({
-            "Pessimista": np.percentile(matriz, 10, axis=0),
-            "Médio": np.percentile(matriz, 50, axis=0),
-            "Otimista": np.percentile(matriz, 90, axis=0)
-        })
-        
-        st.line_chart(df_plot)
-        st.caption("O gráfico mostra o valor bruto. As métricas acima já descontam IR e Inflação.")
+    if st.button("🚀 Simular Cenários Probabilísticos"):
+        with st.spinner("Simulando 1.000 universos possíveis..."):
+            matriz = simular_monte_carlo(v_ini, v_aporte, taxa_manual, tempo, volatilidade)
+            cenarios = extrair_cenarios_monte_carlo(matriz, v_ini, v_aporte, tempo, inflacao)
+            
+            st.subheader("📊 Análise de Risco (Modelo Lognormal)")
+            
+            # Métricas com explicação
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Cenário Ruim (10%)", f"R$ {cenarios['pessimista']:,.2f}", help="Existe 90% de chance de você ganhar MAIS que isso.")
+            c2.metric("Cenário Provável", f"R$ {cenarios['provavel']:,.2f}", help="A mediana das simulações.")
+            c3.metric("Cenário Ótimo (10%)", f"R$ {cenarios['otimista']:,.2f}", help="Cenário de mercado muito favorável.")
+            
+            # Gráfico Melhorado
+            df_plot = pd.DataFrame({
+                "Pessimista": np.percentile(matriz, 10, axis=0),
+                "Médio": np.percentile(matriz, 50, axis=0),
+                "Otimista": np.percentile(matriz, 90, axis=0)
+            })
+            
+            st.line_chart(df_plot)
+            st.caption("O gráfico mostra o valor bruto. As métricas acima já descontam IR e Inflação.")
 
 
-        st.markdown("---")
-        st.subheader("🍕 Composição do Patrimônio (Cenário Provável)")
+            st.markdown("---")
+            st.subheader("🍕 Composição do Patrimônio (Cenário Provável)")
 
-        # 1. Pegamos o valor BRUTO mediano (sem nenhum desconto ainda)
-        v_bruto_provavel = np.percentile(matriz[:, -1], 50)
+            # 1. Pegamos o valor BRUTO mediano (sem nenhum desconto ainda)
+            v_bruto_provavel = np.percentile(matriz[:, -1], 50)
 
-        # 2. Calculamos o IR e o Líquido exatos para esse valor
-        total_investido = v_ini + (v_aporte * tempo)
-        v_imposto, v_liquido_nominal = calcular_ir_renda_fixa(v_bruto_provavel, v_ini, v_aporte, tempo)
-        lucro_liquido = v_liquido_nominal - total_investido
+            # 2. Calculamos o IR e o Líquido exatos para esse valor
+            total_investido = v_ini + (v_aporte * tempo)
+            v_imposto, v_liquido_nominal = calcular_ir_renda_fixa(v_bruto_provavel, v_ini, v_aporte, tempo)
+            lucro_liquido = v_liquido_nominal - total_investido
 
-        # 3. Criamos os dados com as 3 fatias
-        df_pizza = pd.DataFrame({
-            "Categoria": ["Capital Investido", "Lucro Líquido", "Imposto de Renda (IR)"],
-            "Valores": [total_investido, max(0, lucro_liquido), v_imposto]
-        })
+            # 3. Criamos os dados com as 3 fatias
+            df_pizza = pd.DataFrame({
+                "Categoria": ["Capital Investido", "Lucro Líquido", "Imposto de Renda (IR)"],
+                "Valores": [total_investido, max(0, lucro_liquido), v_imposto]
+            })
 
-        # 4. Gráfico com 3 cores (Azul, Verde e Vermelho/Laranja para o imposto)
-        fig = px.pie(df_pizza, values='Valores', names='Categoria', 
-                    color_discrete_sequence=['#29b5e8', '#1af2aa', '#ff4b4b'],
-                    hole=0.4)
+            # 4. Gráfico com 3 cores (Azul, Verde e Vermelho/Laranja para o imposto)
+            fig = px.pie(df_pizza, values='Valores', names='Categoria', 
+                        color_discrete_sequence=['#29b5e8', '#1af2aa', '#ff4b4b'],
+                        hole=0.4)
 
-        st.plotly_chart(fig)
+            st.plotly_chart(fig)
 
 
 
@@ -154,7 +154,7 @@ with tab3:
     if modo_plan == "Tempo para atingir uma Meta":
         # Aqui entra a sua ideia de Meta de Lucro vs Total
         tipo_m = col_m1.selectbox("Tipo de Meta", ["Valor Total", "Lucro Acumulado"])
-        meta_v = col_m2.number_input("Valor da Meta (R$)", value=100000.0, step=10000.0)
+        meta_v = col_m2.number_input("Valor da Meta (R$)", value=0.0, step=10000.0, format="%.2f")
         t_real = st.slider("Taxa Real Esperada (% a.a.)", 1.0, 15.0, 5.0, key="taxa_tempo") / 100
 
         
@@ -171,7 +171,7 @@ with tab3:
                 st.error("❌ Meta inalcançável com esses aportes.")
 
     else: # Modo: Quanto preciso poupar
-        meta_v = col_m1.number_input("Valor Final Desejado (R$)", value=500000.0)
+        meta_v = col_m1.number_input("Valor Final Desejado (R$)", value=0.0, format="%.2f")
         meses_p = col_m2.number_input("Prazo em Meses", value=120, step=12)
         t_real = st.slider("Taxa Real Esperada (% a.a.)", 1.0, 15.0, 5.0, key="taxa_aporte") / 100
         
