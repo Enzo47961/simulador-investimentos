@@ -6,7 +6,7 @@ from services.recomendador import recomendar_investimentos
 from core.planejador import calcular_tempo_ate_meta
 from services.estratega import analisar_liberdade_financeira
 from core.planejador import calcular_tempo_ate_meta, calcular_aporte_necessario
-from core.simulador import simular_investimento_completo, simular_monte_carlo, extrair_cenarios_monte_carlo, calcular_sharpe_ratio, calcular_max_drawdown
+from core.simulador import simular_investimento_completo, simular_monte_carlo, extrair_cenarios_monte_carlo
 import numpy as np
 from core.impostos import calcular_ir_renda_fixa
 import plotly.express as px
@@ -84,47 +84,6 @@ with tab1:
             c2.metric("Cenário Provável", f"R$ {cenarios['provavel']:,.2f}", help="A mediana das simulações.")
             c3.metric("Cenário Ótimo (10%)", f"R$ {cenarios['otimista']:,.2f}", help="Cenário de mercado muito favorável.")
 
-            # ... (abaixo dos metrics de cenário ruim/provável/ótimo)
-
-        sharpe = calcular_sharpe_ratio(matriz, TAXAS_MERCADO['SELIC'])
-
-        st.markdown("---")
-        col_s1, col_s2 = st.columns([1, 2])
-
-        with col_s1:
-            st.metric("Índice Sharpe", sharpe, help="Mede a eficiência: quanto maior que 1, melhor o retorno pelo risco tomado.")
-
-        with col_s2:
-            if sharpe > 1:
-                st.success("💎 **Excelente Eficiência:** Você está ganhando muito bem pelo risco que corre.")
-            elif sharpe > 0:
-                st.warning("⚖️ **Eficiência Moderada:** O retorno compensa o risco, mas sem grandes folgas.")
-            else:
-                st.error("⚠️ **Baixa Eficiência:** O risco pode não valer a pena comparado à Selic pura.")
-
-                        # 1. Importe a função (certifique-se de que ela está no topo do arquivo no 'from core.simulador import...')
-        # 2. Calcule o valor
-        max_dd = calcular_max_drawdown(matriz)
-
-        # 3. Exiba ao lado do Sharpe (podemos usar 3 colunas agora)
-        st.markdown("---")
-        col_m1, col_m2, col_m3 = st.columns([1, 1, 2])
-
-        with col_m1:
-            st.metric("Índice Sharpe", sharpe, help="Eficiência: retorno pelo risco.")
-
-        with col_m2:
-            # Exibimos como porcentagem negativa (ex: -5.2%)
-            st.metric("Max Drawdown", f"{max_dd*100:.1f}%", help="A maior queda teórica do pico ao vale durante o período.")
-
-        with col_m3:
-            if max_dd > -0.05:
-                st.success("🛡️ **Baixa Volatilidade:** Quedas históricas muito pequenas.")
-            elif max_dd > -0.15:
-                st.warning("⚠️ **Risco Moderado:** Prepare o estômago para quedas de até 15%.")
-            else:
-                st.error("🚨 **Alto Risco:** Este investimento pode ter quedas bruscas no caminho.")
-
 
         # Gráfico Melhorado
         df_plot = pd.DataFrame({
@@ -160,34 +119,6 @@ with tab1:
                     hole=0.4)
 
         st.plotly_chart(fig)
-
-    # Na Sidebar ou logo abaixo dos inputs principais
-st.sidebar.markdown("---")
-st.sidebar.subheader("🚀 Estratégia Avançada")
-
-crescimento_aporte = st.sidebar.slider(
-    "Aumento Anual do Aporte (%)", 0.0, 20.0, 0.0, 
-    help="Simula aumentos salariais que permitem investir mais a cada ano."
-) / 100
-
-st.sidebar.subheader("💣 Simular Crise Pontual")
-col_ch1, col_ch2 = st.sidebar.columns(2)
-mes_choque = col_ch1.number_input("Mês da Crise", min_value=0, max_value=tempo, value=0)
-queda_choque = col_ch2.slider("Queda (%)", 0, 50, 0) / 100
-
-# AGORA ATUALIZE A CHAMADA DA FUNÇÃO NO SEU BOTÃO 'Calcular Simulação':
-if st.button("🚀 Calcular Simulação Avançada"):
-    res = simular_investimento_completo(
-        v_ini, v_aporte, taxa_manual, tempo, inflacao,
-        crescimento_aporte_anual=crescimento_aporte,
-        mes_choque=mes_choque,
-        intensidade_choque=queda_choque
-    )
-# ... resto do código de exibição (métricas e gráfico) ...
-
-
-
-
 
 with tab2:
     st.subheader("Onde seu dinheiro rende mais?")

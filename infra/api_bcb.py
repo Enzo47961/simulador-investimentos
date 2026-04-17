@@ -1,5 +1,8 @@
 # infra/api_bcb.py
 import requests
+import streamlit as st
+
+@st.cache_data(ttl=86400)
 
 def _buscar_serie(codigo):
     """
