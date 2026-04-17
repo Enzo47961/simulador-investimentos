@@ -1,6 +1,10 @@
 📊 InvestSmart: Consultor e Planejador Financeiro
 InvestSmart é um ecossistema de simulação e estratégia de investimentos desenvolvido em Python. Diferente de calculadoras comuns, o sistema utiliza uma Scoring Engine (mecanismo de pontuação) para recomendar ativos baseados no perfil de risco, liquidez e rentabilidade real do usuário.
 ------------------------------
+
+🌐 Link do Site
+https://simulador-investimentos-ferraraa.streamlit.app/
+
 🚀 Funcionalidades Principais1. 🧠 Motor Matemático (Core)
 
 * Juros Compostos: Cálculos precisos com aportes mensais recorrentes.
