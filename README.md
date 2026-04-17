@@ -2,9 +2,9 @@
 
 O **InvestSmart** é uma aplicação completa de simulação e análise de investimentos que vai além de calculadoras tradicionais, integrando:
 
-* 📊 Simulação financeira avançada
-* 🎲 Modelagem de cenários com Monte Carlo
-* 🧠 Sistema de recomendação baseado em perfil
+- 📊 Simulação financeira avançada
+- 🎲 Modelagem de cenários com Monte Carlo
+- 🧠 Sistema de recomendação baseado em perfil
 
 👉 O objetivo é transformar cálculos financeiros em decisões estratégicas reais.
 
@@ -18,26 +18,25 @@ O **InvestSmart** é uma aplicação completa de simulação e análise de inves
 
 ## 🚀 Funcionalidades
 
-* 💰 Simulação de investimentos com aportes mensais
-* 📉 Ajuste pela inflação (poder de compra real)
-* 💸 Cálculo automático de imposto de renda
-* 📊 Gráficos de evolução do patrimônio
-* 🎲 Simulação de cenários com Monte Carlo
-* 🏆 Comparação entre bancos e produtos
-* 🧠 Sistema de recomendação inteligente baseado em perfil
-* 🎯 Planejamento de metas financeiras
-* 🏦 Diagnóstico de independência financeira
-* 🌐 Integração com API do Banco Central (SELIC, CDI, IPCA)
-
+- 💰 Simulação de investimentos com aportes mensais
+- 📉 Ajuste pela inflação (poder de compra real)
+- 💸 Cálculo automático de imposto de renda
+- 📊 Gráficos de evolução do patrimônio
+- 🎲 Simulação de cenários com Monte Carlo
+- 🏆 Comparação entre bancos e produtos
+- 🧠 Sistema de recomendação inteligente baseado em perfil
+- 🎯 Planejamento de metas financeiras
+- 🏦 Diagnóstico de independência financeira
+- 🌐 Integração com API do Banco Central (SELIC, CDI, IPCA)
 
 ## 🧠 Tecnologias utilizadas
 
-* Python
-* Streamlit
-* NumPy
-* Pandas
-* Plotly
-* Requests
+- Python
+- Streamlit
+- NumPy
+- Pandas
+- Plotly
+- Requests
 
 ---
 
@@ -95,11 +94,10 @@ streamlit run interface.py
 
 Este projeto foi desenvolvido com foco em:
 
-* Aplicação prática de matemática financeira
-* Simulação de cenários realistas
-* Desenvolvimento de lógica de recomendação
-* Criação de uma ferramenta útil para tomada de decisão
-
+- Aplicação prática de matemática financeira
+- Simulação de cenários realistas
+- Desenvolvimento de lógica de recomendação
+- Criação de uma ferramenta útil para tomada de decisão
 
 ## 👨‍💻 Autor
 
