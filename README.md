@@ -65,17 +65,3 @@ projeto-investimentos/
    3. (Opcional) Execute via terminal:
    
    python main.py
-   
-   
-------------------------------
-📈 Roadmap / Próximos Passos (2026)
-
-* Integração com API: Conexão direta com o Banco Central (SGS) para Selic e IPCA em tempo real.
-* Gráficos de Pizza: Visualização da divisão entre Capital Investido e Lucro Gerado.
-* Diversificação: Algoritmo para sugerir divisão de carteira entre os ativos.
-
-------------------------------
-💡 Próximo Passo Sugerido:
-Agora que sua documentação está pronta, você quer que eu te mostre o código da API gratuita para buscar a Selic automaticamente? Assim, você só precisará copiar ele quando decidir automatizar o projeto no futuro!
-
-streamlit run interface.py
