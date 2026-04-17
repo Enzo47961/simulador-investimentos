@@ -1,102 +1,106 @@
-📊 InvestSmart: Consultor e Planejador Financeiro
-InvestSmart é um ecossistema de simulação e estratégia de investimentos desenvolvido em Python. Diferente de calculadoras comuns, o sistema utiliza uma Scoring Engine (mecanismo de pontuação) para recomendar ativos baseados no perfil de risco, liquidez e rentabilidade real do usuário.
+# 📊 InvestSmart — Simulador e Consultor de Investimentos
+
+O **InvestSmart** é uma aplicação completa de simulação e análise de investimentos que vai além de calculadoras tradicionais, integrando:
+
+* 📊 Simulação financeira avançada
+* 🎲 Modelagem de cenários com Monte Carlo
+* 🧠 Sistema de recomendação baseado em perfil
+
+👉 O objetivo é transformar cálculos financeiros em decisões estratégicas reais.
 
 ---
 
-🚀 Funcionalidades Principais1. 🧠 Motor Matemático (Core)
+## 🌐 Link Site
 
-- Juros Compostos: Cálculos precisos com aportes mensais recorrentes.
-- Tributação Automática: Aplicação da tabela regressiva de IR (Renda Fixa) brasileira.
-- Ajuste de Inflação: Cálculo de Poder de Compra Real usando desconto financeiro.
-
-2. 🏆 Ranking Inteligente (Services)
-
-- Comparador de Ativos: Analisa simultaneamente CDBs, LCIs, LCAs e Tesouro Direto.
-- Scoring Engine: Algoritmo que atribui notas aos investimentos com base em:
-- Rentabilidade Líquida Normalizada.
-  - Compatibilidade com Perfil (Conservador vs. Arrojado).
-  - Necessidade de Liquidez (Curto vs. Longo Prazo).
-  - Vantagens Fiscais (Isenção de IR).
-
-3. 🎯 Planejador Estratégico
-
-- Tempo até a Meta: Cálculo de meses necessários para atingir Patrimônio Total ou Lucro Acumulado.
-- Aporte Necessário: Define quanto o usuário precisa poupar para atingir um objetivo em tempo determinado.
-- Diagnóstico de Liberdade: Barra de progresso em tempo real indicando quanto da despesa mensal é coberta pela renda passiva.
+👉 https://simulador-investimentos-ferraraa.streamlit.app/
 
 ---
 
-🛠️ Tecnologias Utilizadas
+## 🚀 Funcionalidades
 
-- Python 3.13+: Linguagem base.
-- Streamlit: Interface web e dashboards interativos.
-- Pandas: Manipulação de dados e tabelas.
-- Dataclasses: Contratos de dados imutáveis para garantir integridade financeira.
+* 💰 Simulação de investimentos com aportes mensais
+* 📉 Ajuste pela inflação (poder de compra real)
+* 💸 Cálculo automático de imposto de renda
+* 📊 Gráficos de evolução do patrimônio
+* 🎲 Simulação de cenários com Monte Carlo
+* 🏆 Comparação entre bancos e produtos
+* 🧠 Sistema de recomendação inteligente baseado em perfil
+* 🎯 Planejamento de metas financeiras
+* 🏦 Diagnóstico de independência financeira
+* 🌐 Integração com API do Banco Central (SELIC, CDI, IPCA)
 
----
 
-📂 Estrutura do Projeto
+## 🧠 Tecnologias utilizadas
 
-projeto-investimentos/
-├── app/ # Futura integração de backend
-├── core/ # 🔥 Núcleo matemático e fórmulas puras
-│ ├── calculos.py # Juros e montantes
-│ ├── impostos.py # Regras da Receita Federal
-│ ├── inflacao.py # Desconto de poder de compra
-│ ├── planejador.py # Lógica de metas e tempo
-│ └── models.py # Contrato de dados (Dataclasses)
-├── services/ # 🧠 Inteligência de Negócio
-│ ├── comparador.py # Orquestração de múltiplos bancos
-│ ├── recomendador.py # Scoring engine e lógica de perfil
-│ └── estratega.py # Diagnóstico de liberdade financeira
-├── data/ # Camada de Dados
-│ ├── ativos.py # Catálogo de produtos financeiros
-│ └── taxas.py # Central de taxas (Selic, CDI, IPCA)
-├── interface.py # Dashboard Web em Streamlit
-└── main.py # Ponto de entrada via Terminal
+* Python
+* Streamlit
+* NumPy
+* Pandas
+* Plotly
+* Requests
 
 ---
 
-🚦 Como Rodar o Projeto
+## 📁 Estrutura do projeto
 
-1.  Instale as dependências:
+```
+core/
+    simulador.py
+    calculos.py
+    impostos.py
+    inflacao.py
+    models.py
+    planejador.py
 
-pip install streamlit pandas
+services/
+    comparador.py
+    recomendador.py
+    estratega.py
 
-2.  Execute a interface web:
+data/
+    ativos.py
+    taxas.py
 
+infra/
+    api_bcb.py
+
+interface.py
+```
+
+---
+
+## ▶️ Como rodar o projeto
+
+1. Clone o repositório:
+
+```
+git clone https://github.com/seu-usuario/seu-repo.git
+```
+
+2. Instale as dependências:
+
+```
+pip install -r requirements.txt
+```
+
+3. Execute a aplicação:
+
+```
 streamlit run interface.py
-
-3.  (Opcional) Execute via terminal:
-
-python main.py
+```
 
 ---
 
-📈 Roadmap / Próximos Passos (2026)
+## 📊 Sobre o projeto
 
-- Integração com API: Conexão direta com o Banco Central (SGS) para Selic e IPCA em tempo real.
-- Gráficos de Pizza: Visualização da divisão entre Capital Investido e Lucro Gerado.
-- Diversificação: Algoritmo para sugerir divisão de carteira entre os ativos.
+Este projeto foi desenvolvido com foco em:
 
----
+* Aplicação prática de matemática financeira
+* Simulação de cenários realistas
+* Desenvolvimento de lógica de recomendação
+* Criação de uma ferramenta útil para tomada de decisão
 
-💡 Próximo Passo Sugerido:
-Agora que sua documentação está pronta, você quer que eu te mostre o código da API gratuita para buscar a Selic automaticamente? Assim, você só precisará copiar ele quando decidir automatizar o projeto no futuro!
 
-streamlit run interface.py
+## 👨‍💻 Autor
 
-git add . (prepara todos os arquivos alterados).
-git commit -m "sua mensagem aqui" (salva uma "foto" das alterações localmente).
-git push (envia tudo para o site do GitHub).
-
-Como funciona na prática (Passo a passo):
-Ache o "DNA" do commit:
-No terminal, digite git log --oneline. Você verá algo assim:
-a1b2c3d (Commit 3 - O mais recente)
-e4f5g6h (Commit 2 - O que você quer)
-i7j8k9l (Commit 1)
-Crie a nova linha do tempo:
-Digite o comando:
-git checkout -b versao-recuperada e4f5g6h
-(Troque versao-recuperada pelo nome que quiser e e4f5g6h pelo código do seu commit).
+Enzo Ferrara

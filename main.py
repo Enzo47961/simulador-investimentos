@@ -2,6 +2,7 @@
 from core.simulador import simular_investimento_completo
 from services.comparador import comparar_bancos
 from services.recomendador import recomendar_investimentos # <-- ADICIONADO
+import streamlit as st
 
 def limpar_entrada(texto):
     if not texto: return 0.0
